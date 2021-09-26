@@ -68,7 +68,6 @@ export default {
         }
         function onError(data) {
           // 定位出错
-          self.getLngLatLocation();
         }
       });
     },

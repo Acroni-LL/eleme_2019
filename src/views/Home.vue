@@ -1,7 +1,10 @@
 <template>
   <div class="home">
     <div class="header">
-      <div class="address_map">
+      <div
+        class="address_map"
+        @click="$router.push({ name: 'address', params: { city: city } })"
+      >
         <i class="fa fa-map-maker"> </i>
         <span>{{ address }} </span>
         <i class="fa fa-sort-desc"></i>
@@ -19,7 +22,17 @@ export default {
   name: "home",
   computed: {
     address() {
-      return this.$store.getters.address;
+      return this.$store.getters.address
+        ? this.$store.getters.address
+        : "重庆市渝北区云贿赂1号出去高金股份有限公司";
+    },
+    city() {
+      // return this.$store.getters.location.addressComponent.city ||
+      //   this.$store.getters.location.addressComponent.province
+      //   ? this.$store.getters.location.addressComponent.city ||
+      //       this.$store.getters.location.addressComponent.province
+      //   : "渝北区云贿赂1号";
+      return "渝北区";
     },
   },
 };
@@ -52,7 +65,7 @@ export default {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-.search_wrap .shop_search {
+.search_wrap .c {
   /* margin-top: 10px; */
   background-color: #fff;
   padding: 10px 0;
