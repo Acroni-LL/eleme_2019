@@ -5,7 +5,11 @@
       <div class="hot_wrap">
         <div class="title">热门城市</div>
         <ul class="hot_city">
-          <li v-for="(item, index) in cityInfo.hotCities" :key="index">
+          <li
+            v-for="(item, index) in cityInfo.hotCities"
+            :key="index"
+            @click="$emit('selectCity', item)"
+          >
             {{ item.name }}
           </li>
         </ul>
@@ -13,18 +17,39 @@
       <!-- 所有城市 -->
       <div class="city_wrap">
         <!-- 按字母排序的key -->
-        <div class="city_content" v-for="(item, index) in keys" :key="index">
+        <div
+          class="city_content citylist"
+          v-for="(item, index) in keys"
+          :key="index"
+        >
           <div class="title">
             {{ item }}
           </div>
           <!-- 根据字母key展示城市名 -->
           <ul>
-            <li v-for="(city, index) in cityInfo[item]" :key="index">
+            <!-- 按字母排序的key -->
+            <li
+              v-for="(city, index) in cityInfo[item]"
+              :key="index"
+              @click="$emit('selectCity', city)"
+            >
               {{ city.name }}
             </li>
           </ul>
         </div>
       </div>
+    </div>
+    <div class="area_keys">
+      <ul>
+        <li @click="selectKey(0)">#</li>
+        <li
+          @click="selectKey(index + 1)"
+          v-for="(item, index) in keys"
+          :key="index"
+        >
+          {{ item }}
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -47,6 +72,13 @@ export default {
       this.scroll = new BScroll(this.$refs.area_scroll, {
         click: true,
       });
+    },
+    seletcKey(index) {
+      // console.log(this.$refs.area_scroll.getElementByClassName("citylist"));
+      const citylist =
+        this.$refs.area_scroll.getElementsByClassName("citylist");
+      let el = citylist(index);
+      this.scroll.scrollToElement(el, 250);
     },
   },
 };

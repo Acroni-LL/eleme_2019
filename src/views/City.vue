@@ -5,13 +5,33 @@
         <i class="fa fa-search"></i>
         <input type="text" v-model="city_val" placeholder="输入城市明晨" />
       </div>
-      <button @click="$router.go(-1)">取消</button>
+      <button
+        @click="$router.push({ name: 'address', params: { city: city } })"
+      >
+        取消
+      </button>
     </div>
-    <div style="height: 100%">
+    <div style="height: 100%" v-if="searchList.length == 0">
       <div class="location">
-        <Location :address="city" />
+        <Location :address="city" @click="selectCity({ name: city })" />
       </div>
-      <Alphabet ref="allcity" :cityInfo="cityInfo" :keys="keys" />
+      <Alphabet
+        ref="allcity"
+        :cityInfo="cityInfo"
+        :keys="keys"
+        @selectCity="selectCity"
+      />
+    </div>
+    <div class="search_list" v-else>
+      <ul>
+        <li
+          v-for="(item, index) in searchList"
+          :key="index"
+          @click="selectCity(item)"
+        >
+          {{ item.name }}
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -26,6 +46,8 @@ export default {
       city_val: "",
       cityInfo: "",
       keys: [],
+      allCities: [],
+      searchList: [],
     };
   },
   computed: {
@@ -45,6 +67,11 @@ export default {
   created() {
     // this.getCityInfo();
   },
+  watch: {
+    city_val() {
+      this.searchCity();
+    },
+  },
   methods: {
     getCityInfo() {
       this.$axios("/api/posts/cities")
@@ -59,8 +86,28 @@ export default {
           this.$nextTick(() => {
             this.$refs.allcity.initScroll();
           });
+          // 存储所有城市，用来搜索过滤
+          this.keys.forEach((key) => {
+            tihs.cityInfo[key].forEach((city) => {
+              this.allCities.push(city);
+            });
+          });
         })
         .catch((err) => {});
+    },
+    selectCity(city) {
+      this.$router.push({ name: "address", params: { city: city.name } });
+    },
+    searchCity() {
+      if (!this.city_val) {
+        //搜索框为空则数组为空
+        this.searchList = [];
+      } else {
+        //根据输入框的关键字检索城市 并存入searchList中
+        this.searchList = this.allCities.filter((item) => {
+          return item.name.indexOf(this.city_val) != -1;
+        });
+      }
     },
   },
 };

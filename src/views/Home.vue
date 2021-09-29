@@ -9,17 +9,80 @@
         <span>{{ address }} </span>
         <i class="fa fa-sort-desc"></i>
       </div>
+    </div>
+    <div class="search_wrap" :class="{ fixedview: showFilter }">
       <div class="shop_search">
         <i class="fa fa-search"></i>
         搜索商家 商家名称
       </div>
     </div>
+    <div class="container">
+      <!-- // 轮播 -->
+      <mt-swipe :auto="4000" class="swiper">
+        <!-- <mt-swipe-item v-for="(img, index) in swipeImgs" :key="index"
+          ><img :src="img" />1111
+        </mt-swipe-item> -->
+        <mt-swipe-item>1111 </mt-swipe-item>
+      </mt-swipe>
+      <!-- // 分类 -->
+      <mt-swipe :auto="0" class="entries">
+        <mt-swipe-item
+          v-for="(entries, i) in entries"
+          :key="i"
+          class="entry_wrap"
+        >
+          <div class="foodentry" v-for="(item, index) in entry" :key="index">
+            <div class="img_wrap">
+              <img :src="item.image" alt="" />
+            </div>
+            <span>{{ item.name }} </span>
+          </div>
+        </mt-swipe-item>
+      </mt-swipe>
+    </div>
+    <!-- 推荐商家  -->
+    <div class="shoplist-title">推荐商家</div>
+    <!-- 导航 -->
+    <FilterView :filterData="filterData" @updata="updata" />
+    <!-- 商家信息 -->
+    <mt-loadmore
+      :top-method="loadData"
+      :bottom-method="loadMore"
+      :bottom-all-loaded="allLoaded"
+      :auto-fill="false"
+      :bottomPullText="bottomPullText"
+      ref="loadmore"
+      ><div class="shoplist">
+        <IndexShop
+          v-for="(item, index) in restaurants"
+          :key="index"
+          :restaurant="item.restaurant"
+        />
+      </div>
+    </mt-loadmore>
   </div>
 </template>
 
 <script>
+import { Swipe, SwipeItem, Loadmore } from "mint-ui";
+import FilterView from "../components/FilterView";
+import IndexShop from "../components/IndexShop";
 export default {
   name: "home",
+  data() {
+    return {
+      swipImgs: [],
+      entries: [],
+      filterData: null,
+      showFilter: false,
+      page: 1,
+      size: 5,
+      restaurants: [], //存放所有商家的容器
+      allLoaded: false,
+      bottomPullText: "上蜡加载更多",
+      data: null,
+    };
+  },
   computed: {
     address() {
       return this.$store.getters.address
@@ -34,6 +97,68 @@ export default {
       //   : "渝北区云贿赂1号";
       return "渝北区";
     },
+  },
+  created() {
+    // this.getData();
+  },
+  methods: {
+    getData() {
+      this.$axios("/api/profile/shopping").then((res) => {
+        this.swipeImgs = res.data.swipeImgs;
+        this.entries = res.data.entries;
+      });
+      this.$axios("/api/profilr/filter").then((res) => {
+        this.filterData = res.data;
+      });
+    },
+    loadData() {
+      this.page = 1;
+      this.allLoaded = falsethis.bottomPullText = "上啦家在跟多";
+      //拉去商家星系
+      this.$axios
+        .post("/api/profile/restaurants/${this.page}/${this.size}")
+        .then((res) => {
+          this.$refs.loadmore.onTopLoaded();
+          this.restaurants = res.data;
+        });
+    },
+    loadMore() {
+      if (!this.allLoaded) {
+        this.page++;
+        //拉去商家星系
+        this.$axios
+          .post("/api/profile/restaurants/${this.page}/${this.size}", this.data)
+          .then((res) => {
+            //家在万之后重新渲染
+            this.$refs.loadmore.onBottomLoaded();
+            if (res.data.length > 0) {
+              res.data.forEach((item) => {
+                this.restaurants.push(item);
+              });
+              if (res.data < this.size) {
+                this.allLoaded;
+                this.allLoaded = true;
+                this.bottomPullText = "没有跟多了哦";
+              }
+            } else {
+              //数据为空
+              this.allLoaded = true;
+              this.bottomPullText = "没有跟多了哦";
+            }
+          });
+      }
+    },
+    showFilterView(isShow) {
+      this.showFilter = isShow;
+    },
+    updata(condition) {
+      this.data = condition;
+      this.loadData();
+    },
+  },
+  components: {
+    FilterView,
+    IndexShop,
   },
 };
 </script>
@@ -104,7 +229,7 @@ export default {
   position: relative;
   display: inline-block;
   width: 12vw;
-  height: 12vw;
+  height: 6vw;
 }
 .img_wrap img {
   width: 100%;
