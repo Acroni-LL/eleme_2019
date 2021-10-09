@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <div class="logo">
-      <img src="../assets/logo.jpeg" alt="myloginimage" />
+      <img src="../assets/logo.jpg" alt="myloginimage" />
     </div>
     <!-- 手机号 -->
     <InputGroup
