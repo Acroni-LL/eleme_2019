@@ -1,10 +1,109 @@
 <template>
-  <div>Comments</div>
+  <div class="comment" v-if="evaluation">
+    <!-- 商家评分 -->
+    <section class="rating-wrap">
+      <div class="rating-info">
+        <h4>{{ evaluation.rating.shop_score }}</h4>
+        <div class="shop-score">
+          <span> 商家品分 </span>
+          <Rating :rating="evaluation.rating.shop_score" />
+        </div>
+      </div>
+      <div class="other-score">
+        <div class="tp-score">
+          <div>
+            <span>味道</span>
+            <p>{{ evaluation.rating.taste_score.toFixed(1) }}</p>
+          </div>
+          <div>
+            <span> 包装 </span>
+            <p>{{ evaluation.rating.package_score.toFixed(1) }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="rider-score">
+        <span>配送 </span>
+        <p>{{ evaluation.rating.rider_score.toFixed(1) }}</p>
+      </div>
+    </section>
+    <!-- 评论区 -->
+    <div class="shop-info">
+      <!-- tags -->
+      <ul class="tags">
+        <li
+          :class="{ unsatisfied: item.unsatisfied }"
+          v-for="(item, index) in evaluation.tags"
+          :key="index"
+        >
+          {{ item.name }}
+        </li>
+        <span v-if="item.count > 0">{{ item.count }} </span>
+      </ul>
+      <!-- content -->
+      <ul class="comments-wrap">
+        <li v-for="(item, index) in evalution.comments" :key="index">
+          <div class="comments-user">
+            <img src=" item.avater" alt="" />
+          </div>
+          <div class="comment-info">
+            <div class="comment-name">
+              <h4>{{ item.username }}</h4>
+              <small>{{ item.rated_at }} </small>
+            </div>
+            <div class="comment-rating">
+              <Rating :rating="item.rating" />
+              <span :style="{ color: ratingcontent(item.rating).color }"
+                >{{ ratingcontent(item.rating).txt }}
+              </span>
+            </div>
+            <div class="comment-text">
+              {{ item.comment_text }}
+            </div>
+            <div class="comment-reply">{{ item.reply.content }}</div>
+            <ul class="content-imgs">
+              <li v-for="(img, i) in item.order_images" :key="i">
+                <img :src="img.image_hash" alt="" />
+              </li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
 </template>
 
 <script>
+import { Rating } from "../../components/Rating.vue";
 export default {
   name: "Comments",
+  data() {
+    return {
+      evaluation: null,
+    };
+  },
+  created() {
+    this.getData();
+  },
+  methods: {
+    getData() {
+      this.$axios("/api/profile/comments").then((res) => {
+        this.evaluation = res.data;
+      });
+    },
+    ratingContent(rating) {
+      const content = [
+        { txt: "吐槽", color: "rgb(137,159,188)" },
+        { txt: "较差", color: "rgb(137, 159, 188)" },
+        { txt: "一般", color: "rgb(251, 154, 11)" },
+        { txt: "满意", color: "rgb(251, 154, 11)" },
+        { txt: "超赞", color: "rgb(255, 96, 0)" },
+      ];
+      return content[rating - 1];
+    },
+  },
+  components: {
+    Rating,
+  },
 };
 </script>
 

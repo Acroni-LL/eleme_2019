@@ -1,10 +1,32 @@
 <template>
-  <div>Seller</div>
+  <div class="seller" v-if="sellerInfo">
+    <section>
+      <img :src="sellerInfo.header_image" alt="" />
+      <h3>{{ sellerInfo.title }}</h3>
+      <p>{{ sellerInfo.brand_intros[0].brief }}</p>
+      <div>查看品牌故事</div>
+    </section>
+  </div>
 </template>
 
 <script>
 export default {
   name: "Seller",
+  data() {
+    return {
+      sellerInfo: null,
+    };
+  },
+  created() {
+    this.getData();
+  },
+  methods: {
+    getData() {
+      this.$axios("/api/profile/seller").then((res) => {
+        this.sellerInfo = res.data;
+      });
+    },
+  },
 };
 </script>
 

@@ -67,7 +67,7 @@ export default {
         .then((res) => {
           console.log(res);
           //检验陈功，设置登陆状态并且跳转到登陆状态／
-          localStorage.setItem("ele_login", true);
+          localStorage.setItem("ele_login", res.data.user._id);
           this.$router.push("/");
         })
         .catch((err) => {

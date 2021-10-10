@@ -45,6 +45,7 @@ const routes = [
   }, {
     path: '/shop',
     name: 'shop',
+    redirect: "/goods",
     component: () => import('../views/Shops/Shop'),
     children: [
       {
@@ -61,7 +62,15 @@ const routes = [
         component: () => import('../views/Shops/Seller.vue')
       },
     ]
-  },
+  }, {
+    path: '/myAddress',
+    name: 'myAddress',
+    component: () => import('../views/Orders/MyAddress')
+  }, {
+    path: '/addAddress',
+    name: 'addAddress',
+    component: () => import('../views/Orders/AddAddress')
+  }
 ]
 
 
