@@ -5,17 +5,41 @@ Vue.use(Vuex)
 
 const types = {
   SET_LOCATION: "SET_LOCATION",
-  SET_ADDRESS: "SET_ADDRESS"
+  SET_ADDRESS: "SET_ADDRESS",
+  ORDER_INFO: "ORDER_INFO",
+  USER_INFO: "USER_INFO",
+  REMARK_INFO: "REMARK_INFO"
 }
 
 const state = {
   location: {},
-  address: ""
+  address: "",
+  orderInfo: null,
+  userInfo: null,
+  remarkInfo: {
+    tableware: ''
+  }
 }
 
 const getters = {
   location: state => state.location,
-  address: state => state.address
+  address: state => state.address,
+  orderInfo: state => state.orderInfo,
+  userInfo: state => state.userInfo,
+  totalPrice: state => {
+    let price = 0
+    if (state.orderInfo) {
+      const selectFoods = state.orderInfo.selectFoods
+      selectFoods.forEach(food => {
+        price += (food.activity.fixed_price * food.count)
+      })
+      price += state.orderInfo.shopInfo.float_delivery_fee
+    }
+    return price
+  },
+  remarkInfo: state => {
+    state.remarkInfo
+  }
 }
 
 const mutations = {
@@ -32,6 +56,27 @@ const mutations = {
     } else {
       state.address = ""
     }
+  },
+  [types.ORDER_INFO](state, orderInfo) {
+    if (orderInfo) {
+      state.orderInfo = orderInfo
+    } else {
+      state.orderInfo = null
+    }
+  },
+  [types.USER_INFO](state, remarkInfo) {
+    if (remarkInfo) {
+      state.remarkInfo = remarkInfo
+    } else {
+      state.remarkInfo = null
+    }
+  },
+  [types.REMARK_INFO](state, userInfo) {
+    if (userInfo) {
+      state.userInfo = userInfo
+    } else {
+      state.userInfo = null
+    }
   }
 }
 
@@ -41,6 +86,15 @@ const actions = {
   },
   setAddress: ({ commit }, address) => {
     commit(types.SET_ADDRESS, address)
+  },
+  setOrderInfo: ({ commit }, orderInfo) => {
+    commit(types.ORDER_INFO, orderInfo)
+  },
+  setUserInfo: ({ commit }, userInfo) => {
+    commit(types.USER_INFO, userInfo)
+  },
+  setRemarkInfo: ({ commit }, remarkInfo) => {
+    commit(types.REMARK_INFO, remarkInfo)
   }
 
 }

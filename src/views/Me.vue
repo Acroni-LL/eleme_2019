@@ -51,7 +51,20 @@ export default {
       localStorage.removeItem("ele_login");
     },
     myAddress() {
-      this.$router.push("/myAddress");
+      this.$router.push({
+        name: "addAddress",
+        params: {
+          title: "添加地址",
+          addressInfo: {
+            name: "",
+            sex: "",
+            phone: "",
+            address: "",
+            bottom: "",
+            tag: "",
+          },
+        },
+      });
       // if (this.userInfo.myAddress.length > 0) {
       //   this.$router.push("/myAddress");
       // } else {

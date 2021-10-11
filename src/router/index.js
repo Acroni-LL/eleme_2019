@@ -70,6 +70,14 @@ const routes = [
     path: '/addAddress',
     name: 'addAddress',
     component: () => import('../views/Orders/AddAddress')
+  }, {
+    path: '/settlement',
+    name: 'settlement',
+    component: () => import('../views/Orders/Settlement.vue')
+  }, {
+    path: '/remark',
+    name: 'remark',
+    component: () => import('../views/Orders/Remark.vue')
   }
 ]
 

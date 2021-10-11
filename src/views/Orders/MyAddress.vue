@@ -1,6 +1,34 @@
 <template>
   <div class="myAddress">
     <Header :isLeft="true" :title="title" />
+    <!-- 显示收获地址 -->
+    <div class="address-view">
+      <div
+        class="address-card"
+        v-for="(address, index) in allAddress"
+        :key="index"
+      >
+        <div class="address-card-select">
+          <i class="fa fa-check-circle" v-if="selectIndex == index"></i>
+        </div>
+        <div class="address-card-body" @click="setAddressInfo(address, index)">
+          <p class="address-card-title">
+            <span class="username">{{ address.name }} </span>
+            <span v-if="address.sex" class="gender">{{ address.gender }} </span>
+            <span class="phone">{{ address.phone }} </span>
+          </p>
+          <p class="address-card-address">
+            <span class="tag" v-if="address.tag">{{ address.tag }} </span>
+            <span class="address-text">{{ address.address }} </span>
+          </p>
+        </div>
+        <div class="address-card-edit">
+          <i @click="handleEdit(address)" class="fa fa-edit"></i>
+          <i @click="handleDelete(address, index)" class="fa fa-close"></i>
+        </div>
+      </div>
+    </div>
+    <!-- 添加收货地址 -->
     <div class="addressview-bottom" @click="addAddress">
       <i class="fa fa-plus-circle"> </i>
       <span>添加收货地址</span>
@@ -15,11 +43,63 @@ export default {
   data() {
     return {
       title: "我的地址",
+      allAddress: [],
+      selectIndex: 0,
     };
+  },
+  computed: {
+    userInfo() {
+      return this.$store.getters.userInfo;
+    },
+  },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => vm.getData());
   },
   methods: {
     addAddress() {
-      thia.$router.push("/addAddress");
+      thia.$router.push({
+        name: "addAddress",
+        params: {
+          title: "添加地址",
+          addressInfo: {
+            name: "",
+            sex: "",
+            phone: "",
+            address: "",
+            bottom: "",
+            tag: "",
+          },
+        },
+      });
+    },
+    getData() {
+      this.$axios(`/api/user/user_info/${localStorage.ele_login}`).then(
+        (res) => {
+          this.allAdress = res.data.myAddress;
+        }
+      );
+    },
+    handleEdit(address) {
+      this.$router.push({
+        name: "addAddress",
+        params: {
+          title: "编辑地址",
+          addressInfo: address,
+        },
+      });
+    },
+    handleDelete(address, index) {
+      this.$axios
+        .delete(`/api/user/address/${localStorage.ele_login}/${address.id}`)
+        .then((res) => {
+          this.allAdress.splice(index, 1);
+        });
+    },
+    setAddressInfo(address, index) {
+      this.selectIndex = index;
+      //将address对象存储到vuex
+      this.$store.dispatch("setUserInfo", address);
+      this.$router.push("/settlement");
     },
   },
   components: {

@@ -39,7 +39,9 @@
     </div>
     <!-- 导航 -->
     <NavBar />
-    <router-view></router-view>
+    <keep-alive>
+      <router-view></router-view>
+    </keep-alive>
   </div>
 </template>
 
