@@ -17,7 +17,8 @@ const state = {
   orderInfo: null,
   userInfo: null,
   remarkInfo: {
-    tableware: ''
+    tableware: '',
+    remark: ''
   }
 }
 

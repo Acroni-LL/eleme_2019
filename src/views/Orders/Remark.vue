@@ -8,17 +8,24 @@
         </textarea>
         <div class="switch">
           <span
+            @click="handleRadioItem(item)"
             v-for="(item, index) in radioItem"
             :key="index"
+            :class="{ ' selected': item.select }"
             class="switch-item item-line"
             >{{ item.name }}
           </span>
         </div>
         <div class="switch" v-for="(item, index) in switchItem" :key="index">
-          <span class="switch-item">{{ item.name }} </span>
+          <span
+            class="switch-item"
+            @click="item.select = !item.select"
+            :class="{ ' selected': item.select }"
+            >{{ item.name }}
+          </span>
         </div>
       </section>
-      <button class="btn-submit">确定</button>
+      <button @click="sunmitClick" class="btn-submit">确定</button>
     </div>
   </div>
 </template>
@@ -42,6 +49,34 @@ export default {
       ],
       text: "",
     };
+  },
+  methods: {
+    handleRadioItem(item) {
+      this.radioItem.forEach((element) => {
+        element.select = false;
+      });
+      item.select = true;
+    },
+    sunmitClick() {
+      let selectItems = "";
+      this.radioItem.forEach((element) => {
+        if (element.select) {
+          selectItems += element.name + ",";
+        }
+      });
+      this.switchItem.forEach((element) => {
+        if (element.select) {
+          selectItems += element.name + ",";
+        }
+      });
+      selectItems += item.text;
+      //存储
+      this.$store.dispacth("setRemarkInfo", {
+        tableware: this.$store.getters.remarkInfo.tableware,
+        remark: selectItems,
+      });
+      this.$router.go(-1);
+    },
   },
   components: {
     Header,

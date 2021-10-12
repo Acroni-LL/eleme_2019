@@ -37,6 +37,7 @@ export default {
       this.selectItem = item;
       this.$store.dispatch("setRemarkInfo", {
         tableware: item + "份餐具",
+        remark: this.$store.getters.remarkInfo.remark,
       });
       this.$emit("close");
     },

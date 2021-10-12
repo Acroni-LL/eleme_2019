@@ -43,7 +43,7 @@
           <CartItem
             @click="$router.push('/remark')"
             title="订单备注"
-            subHead="口味 偏好"
+            :subHead="'口味 偏好 ' || remarkInfo.remark"
           />
           <CartItem title="发票信息" subHead="不需要开发票" />
         </section>
@@ -51,6 +51,11 @@
         <Tableware :isShow="showTableware" @close="showTableware = false" />
       </div>
     </div>
+    <!-- 底部 -->
+    <footer class="action-bar">
+      <span>${{ totalPrice }}</span>
+      <button @click="handlePay">去支付</button>
+    </footer>
   </div>
 </template>
 
@@ -60,6 +65,7 @@ import Header from "../../components/Header.vue";
 import CartGroup from "../../components/Orders/CartGroup.vue";
 import CartItem from "../../components/Orders/CartItem.vue";
 import Tableware from "../../components/Orders/Tableware.vue";
+import { Toast } from "mint-ui";
 export default {
   name: "Settlement",
   data() {
@@ -116,6 +122,17 @@ export default {
           }
         }
       );
+    },
+    handlePay() {
+      if (!this.userInfo) {
+        Toast({
+          message: "请选择收获地址",
+          position: "bottom",
+          duration: 2000,
+        });
+        return;
+      }
+      this.$router.push("/pay");
     },
   },
   components: {
