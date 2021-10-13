@@ -5,7 +5,11 @@
       v-for="(order, index) in orderlist"
       :key="index"
     >
-      <div class="order-card-wrap" v-if="order.orderInfo">
+      <div
+        class="order-card-wrap"
+        v-if="order.orderInfo"
+        @click="$router.push({ name: 'orderInfo', params: order })"
+      >
         <img src="order.orderInfo.shopInfo.image_path" alt="" />
         <div class="order-card-content">
           <div class="order-card-head">
